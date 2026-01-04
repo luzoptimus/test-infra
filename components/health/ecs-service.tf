@@ -1,8 +1,8 @@
 
 module "ecs_service" {
   for_each = var.ecs_services
-  source   = "terraform-aws-modules/ecs/aws//modules/service"
-  version  = "6.6.1"
+  source   = "../../modules/terraform-aws-ecs/modules/service"
+  #version  = "6.6.1"
 
   # Service
   name        = each.value.name

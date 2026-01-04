@@ -4,8 +4,8 @@
 ################################################################################
 
 module "ecs" {
-  source  = "terraform-aws-modules/ecs/aws//modules/cluster"
-  version = "6.6.1"
+  source  = "../../modules/terraform-aws-ecs/modules/cluster"
+  #version = "6.6.1"
 #   source = "../../modules/cluster"
 
   name = local.name
