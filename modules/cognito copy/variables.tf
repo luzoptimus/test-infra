@@ -1,0 +1,497 @@
+variable "name" {
+  type        = string
+  description = "(Required) The name of the user pool."
+  default     = "cognito-pool"
+}
+variable "aws_account_id"{
+    type = string
+    description = "AWS account id which to provision the AWS resources"
+}
+variable region {
+    type    = string
+    description = "Region where the resources are going to be deploy"
+}
+variable "namespace" {
+  type        = string
+  default     = ""
+  description = "Namespace, which could be your organization name or abbreviation, e.g. 'eg' or 'cp'"
+}
+variable "environment" {
+  type        = string
+  default     = ""
+  description = "Environment, e.g. 'qa' 'st' 'pr' 'test'"
+}
+variable "project" {
+  type        = string
+  default     = ""
+  description = "Solution name, e.g. 'app' or 'jenkins'"
+}
+variable "subproject" {
+  type        = string
+  description = "Subproject name, e.g. 'bdb-conciliation'"
+  default     = ""
+}
+variable "advanced_security_mode" {
+  type        = string
+  description = "(Optional) The mode for advanced security, must be one of `OFF`, `AUDIT` or `ENFORCED`. Additional pricing applies for Amazon Cognito advanced security features. For details see https://aws.amazon.com/cognito/pricing/"
+  default     = "AUDIT"
+}
+variable "alias_attributes" {
+  type        = set(string)
+  description = "(Optional) Attributes supported as an alias for this user pool. Possible values: 'phone_number', 'email', or 'preferred_username'. Conflicts with username_attributes."
+  default     = null
+}
+variable "username_attributes" {
+  type        = set(string)
+  description = "(Optional) Specifies whether email addresses or phone numbers can be specified as usernames when a user signs up. Conflicts with alias_attributes."
+  default     = null
+}
+variable "allow_admin_create_user_only" {
+  type        = bool
+  description = "(Optional) Set to True if only the administrator is allowed to create user profiles. Set to False if users can sign themselves up via an app."
+  default     = true
+}
+variable "clients" {
+  description = "(Optional) A list of objects with the clients definitions."
+  type        = any
+  default = []
+}
+variable "domain" {
+  description = "(Optional) Type a domain prefix to use for the sign-up and sign-in pages that are hosted by Amazon Cognito, e.g. 'https://{YOUR_PREFIX}.auth.eu-west-1.amazoncognito.com'. The prefix must be unique across the selected AWS Region. Domain names can only contain lower-case letters, numbers, and hyphens."
+  type        = string
+  default     = null
+}
+variable "certificate_arn" {
+  description = "(Optional) The ARN of an ISSUED ACM certificate in us-east-1 for a custom domain."
+  type        = string
+  default     = null
+}
+variable "default_client_allowed_oauth_flows" {
+  description = "(Optional) List of allowed OAuth flows. Possible flows are 'code', 'implicit', and 'client_credentials'."
+  type        = list(string)
+  default     = null
+}
+variable "default_client_allowed_oauth_flows_user_pool_client" {
+  description = "(Optional) Whether the client is allowed to follow the OAuth protocol when interacting with Cognito User Pools."
+  type        = bool
+  default     = null
+}
+variable "default_client_allowed_oauth_scopes" {
+  description = "(Optional) List of allowed OAuth scopes. Possible values are 'phone', 'email', 'openid', 'profile', and 'aws.cognito.signin.user.admin'."
+  type        = list(string)
+  default     = null
+}
+variable "default_client_callback_urls" {
+  description = "(Optional) List of allowed callback URLs for the identity providers."
+  type        = list(string)
+  default     = null
+}
+variable "default_client_default_redirect_uri" {
+  description = "(Optional) The default redirect URI. Must be in the list of callback URLs."
+  type        = string
+  default     = null
+}
+variable "default_client_explicit_auth_flows" {
+  description = "(Optional) List of authentication flows. Possible values are 'ADMIN_NO_SRP_AUTH', 'CUSTOM_AUTH_FLOW_ONLY', 'USER_PASSWORD_AUTH', 'ALLOW_ADMIN_USER_PASSWORD_AUTH', 'ALLOW_CUSTOM_AUTH', 'ALLOW_USER_PASSWORD_AUTH', 'ALLOW_USER_SRP_AUTH', and 'ALLOW_REFRESH_TOKEN_AUTH'."
+  type        = list(string)
+  default     = null
+}
+variable "default_client_generate_secret" {
+  description = "(Optional) Boolean flag for generating an application secret."
+  type        = bool
+  default     = null
+}
+variable "default_client_logout_urls" {
+  description = "(Optional) List of allowed logout URLs for the identity providers."
+  type        = list(string)
+  default     = null
+}
+variable "default_client_read_attributes" {
+  description = "(Optional) List of Cognito User Pool attributes the application client can read from."
+  type        = list(string)
+  default     = null
+}
+variable "default_client_refresh_token_validity" {
+  description = "(Optional) The time limit in days refresh tokens are valid for."
+  type        = number
+  default     = 30
+}
+variable "default_client_prevent_user_existence_errors" {
+  description = "(Optional) Choose which errors and responses are returned by Cognito APIs during authentication, account confirmation, and password recovery when the user does not exist in the Cognito User Pool. When set to 'ENABLED' and the user does not exist, authentication returns an error indicating either the username or password was incorrect, and account confirmation and password recovery return a response indicating a code was sent to a simulated destination. When set to 'LEGACY', those APIs will return a 'UserNotFoundException' exception if the user does not exist in the Cognito User Pool."
+  type        = string
+  default     = null
+}
+variable "default_client_supported_identity_providers" {
+  description = "(Optional) List of provider names for the identity providers that are supported on this client."
+  type        = list(string)
+  default     = null
+}
+variable "default_client_write_attributes" {
+  description = "(Optional) List of Cognito User Pool attributes the application client can write to."
+  type        = list(string)
+  default     = null
+}
+variable "invite_email_subject" {
+  type        = string
+  description = "(Optional) The subject for email messages."
+  default     = "Your new account."
+}
+variable "invite_email_message" {
+  type        = string
+  description = "(Optional) The message template for email messages. Must contain {username} and {####} placeholders, for username and temporary password, respectively."
+  default     = "Your username is {username} and your temporary password is '{####}'."
+}
+variable "invite_sms_message" {
+  type        = string
+  description = "(Optional) The message template for SMS messages. Must contain {username} and {####} placeholders, for username and temporary password, respectively."
+  default     = "Your username is {username} and your temporary password is '{####}'."
+}
+variable "auto_verified_attributes" {
+  type        = set(string)
+  description = "(Optional) The attributes to be auto-verified. Possible values: 'email', 'phone_number'."
+  default = [
+    "email"
+  ]
+}
+variable "account_recovery_mechanisms" {
+  type        = any
+  description = "(Optional) A list of recovery_mechanisms which are defined by a `name` and its `priority`. Valid values for `name` are veri  fied_email, verified_phone_number, and admin_only."
+
+  # Ejemplo:
+  #
+  # account_recovery_setting_recovery_mechanisms = [
+  #   {
+  #     name          = "verified_email"
+  #     priority      = 1
+  #   },
+  #   {
+  #     name          = "verified_phone_number"
+  #     priority      = 2
+  #   }
+  # ]
+
+  default = []
+}
+variable "challenge_required_on_new_device" {
+  type        = bool
+  description = "(Optional) Indicates whether a challenge is required on a new device. Only applicable to a new device."
+  default     = true
+}
+variable "user_device_tracking" {
+  type        = string
+  description = "(Optional) Configure tracking of user devices. Set to 'OFF' to disable tracking, 'ALWAYS' to track all devices or 'USER_OPT_IN' to only track when user opts in."
+  default     = "USER_OPT_IN"
+}
+variable "enable_username_case_sensitivity" {
+  type        = bool
+  description = "(Optional) Specifies whether username case sensitivity will be applied for all users in the user pool through Cognito APIs."
+  default     = false
+}
+variable "email_sending_account" {
+  type        = string
+  description = "(Optional) The email delivery method to use. 'COGNITO_DEFAULT' for the default email functionality built into Cognito or 'DEVELOPER' to use your Amazon SES configuration."
+  default     = "COGNITO_DEFAULT"
+}
+variable "email_reply_to_address" {
+  type        = string
+  description = "(Optional) - The REPLY-TO email address."
+  default     = null
+}
+variable "email_source_arn" {
+  type        = string
+  description = "(Optional) - The ARN of the email source."
+  default     = null
+}
+variable "email_from_address" {
+  type        = string
+  description = "(Optional) - Sender’s email address or sender’s name with their email address (e.g. 'john@smith.com' or 'John Smith <john@smith.com>')."
+  default     = null
+}
+variable "mfa_configuration" {
+  type        = string
+  description = "Multi-Factor Authentication (MFA) configuration for the User Pool. Valid values: 'ON', 'OFF' or 'OPTIONAL'. 'ON' and 'OPTIONAL' require at least one of 'sms_configuration' or 'software_token_mfa_configuration' to be configured."
+  default     = "OFF"
+}
+variable "password_minimum_length" {
+  type        = number
+  description = "(Optional) The minimum length of the password policy that you have set."
+  default     = 8
+}
+variable "password_require_lowercase" {
+  type        = bool
+  description = "(Optional) Whether you have required users to use at least one lowercase letter in their password."
+  default     = true
+}
+variable "password_require_numbers" {
+  type        = bool
+  description = "(Optional) Whether you have required users to use at least one number in their password."
+  default     = true
+}
+variable "password_require_symbols" {
+  type        = bool
+  description = "(Optional) Whether you have required users to use at least one symbol in their password."
+  default     = true
+}
+variable "password_require_uppercase" {
+  type        = bool
+  description = "(Optional) Whether you have required users to use at least one uppercase letter in their password."
+  default     = true
+}
+variable "temporary_password_validity_days" {
+  type        = number
+  description = "(Optional) In the password policy you have set, refers to the number of days a temporary password is valid. If the user does not sign-in during this time, their password will need to be reset by an administrator."
+  default     = 1
+}
+variable "allow_software_mfa_token" {
+  description = "(Optional) Boolean whether to enable software token Multi-Factor (MFA) tokens, such as Time-based One-Time Password (TOTP). To disable software token MFA when 'sms_configuration' is not present, the 'mfa_configuration' argument must be set to OFF and the 'software_token_mfa_configuration' configuration block must be fully removed."
+  type        = bool
+  default     = false
+}
+variable "sms_authentication_message" {
+  type        = string
+  description = "(Optional) A string representing the SMS authentication message. The message must contain the {####} placeholder, which will be replaced with the authentication code."
+  default     = "Your temporary password is {####}."
+}
+variable "lambda_create_auth_challenge" {
+  type        = string
+  description = "(Optional) The ARN of an AWS Lambda creating an authentication challenge."
+  default     = null
+}
+variable "lambda_custom_message" {
+  type        = string
+  description = "(Optional) The ARN of a custom message AWS Lambda trigger."
+  default     = null
+}
+variable "lambda_define_auth_challenge" {
+  type        = string
+  description = "(Optional) The ARN of an AWS Lambda that defines the authentication challenge."
+  default     = null
+}
+variable "lambda_post_authentication" {
+  type        = string
+  description = "(Optional) The ARN of a post-authentication AWS Lambda trigger."
+  default     = null
+}
+variable "lambda_post_confirmation" {
+  type        = string
+  description = "(Optional) The ARN of a post-confirmation AWS Lambda trigger."
+  default     = null
+}
+variable "lambda_pre_authentication" {
+  type        = string
+  description = "(Optional) The ARN of a pre-authentication AWS Lambda trigger."
+  default     = null
+}
+variable "lambda_pre_sign_up" {
+  type        = string
+  description = "(Optional) The ARN of a pre-registration AWS Lambda trigger."
+  default     = null
+}
+variable "lambda_pre_token_generation" {
+  type        = string
+  description = "(Optional) The ARN of an AWS Lambda that allows customization of identity token claims before token generation."
+  default     = null
+}
+variable "lambda_user_migration" {
+  type        = string
+  description = "(Optional) The ARN of the user migration AWS Lambda config type."
+  default     = null
+}
+variable "lambda_verify_auth_challenge_response" {
+  type        = string
+  description = "(Optional) The ARN of an AWS Lambda that verifies the authentication challenge response."
+  default     = null
+}
+
+##New attributes for lambda thrid provider email or sms
+
+variable "lambda_kms_key_id" {
+  type        = string
+  description = "(Optional) The ARN of an AWS Lambda that verifies the authentication challenge response."
+  default     = null
+}
+
+variable "lambda_arn_email" {
+  type        = string
+  description = "(Optional) The Lambda Amazon Resource Name of the Lambda function that Amazon Cognito triggers to send email notifications to users."
+  default     = null
+}
+
+variable "lambda_version_email" {
+  type        = string
+  description = "(Optional) The Lambda version represents the signature of the request attribute in the event information Amazon Cognito passes to your custom SMS Lambda function. The only supported value is V1_0."
+  default     = null
+}
+
+variable "lambda_arn_sms" {
+  type        = string
+  description = "(Optional) The Lambda Amazon Resource Name of the Lambda function that Amazon Cognito triggers to send SMS notifications to users."
+  default     = null
+}
+
+variable "lambda_version_sms" {
+  type        = string
+  description = "(Optional) The Lambda version represents the signature of the request attribute in the event information Amazon Cognito passes to your custom SMS Lambda function. The only supported value is V1_0."
+  default     = null
+}
+
+
+variable "schema_attributes" {
+  description = "(Optional) A list of schema attributes of a user pool. You can add a maximum um 25 custom attributes."
+  type        = any
+  default = []
+}
+variable "sms_configuration" {
+  description = "(Optional) The `sms_configuration` with the `external_id` parameter used in iam role trust relationships and the `sns_caller_arn` parameter to set he arn of the amazon sns caller. this is usually the iam role that you've given cognito permission to assume."
+  type = object({
+    # The external ID used in IAM role trust relationships. For more information about using external IDs, see https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html
+    external_id = string
+    # The ARN of the Amazon SNS caller. This is usually the IAM role that you've given Cognito permission to assume.
+    sns_caller_arn = string
+  })
+  default = null
+}
+variable "default_email_option" {
+  type        = string
+  description = "(Optional) The default email option. Must be either `CONFIRM_WITH_CODE` or `CONFIRM_WITH_LINK`."
+  default     = "CONFIRM_WITH_CODE"
+}
+variable "email_message" {
+  type        = string
+  description = "(Optional) The email message template. Must contain the {####} placeholder."
+  default     = "Your verification code is {####}."
+}
+variable "email_message_by_link" {
+  type        = string
+  description = "(Optional) The email message template for sending a confirmation link to the user, it must contain the {##Click Here##} placeholder."
+  default     = "Please click the link below to verify your email address. {##Verify Email##}."
+}
+variable "email_subject" {
+  type        = string
+  description = "(Optional) The subject line for the email message template."
+  default     = "Your Verification Code"
+}
+variable "email_subject_by_link" {
+  type        = string
+  description = "(Optional) The subject line for the email message template for sending a confirmation link to the user."
+  default     = "Your Verification Link"
+}
+variable "sms_message" {
+  type        = string
+  description = "(Optional) The SMS message template. Must contain the {####} placeholder, which will be replaced with the verification code. Can also contain the {username} placeholder which will be replaced with the username."
+  default     = "Your verification code is {####}."
+}
+variable "tags" {
+  type        = map(string)
+  description = "(Optional) A mapping of tags to assign to the resource."
+  default = {}
+}
+variable "module_enabled" {
+  type        = bool
+  description = "(Optional) Whether to create resources within the module or not. Default is true."
+  default     = true
+}
+variable "module_depends_on" {
+  type        = any
+  description = "(Optional) A list of external resources the module depends_on. Default is []."
+  default     = []
+}
+
+#pool_client
+
+variable "access_token_validity"  {
+  type = number
+  description = "Time limit, between 5 minutes and 1 day"
+  default = 60
+  }   
+
+variable "id_token_validity"  {
+  type = number
+  description = "Time limit, between 5 minutes and 1 day"
+  default = 60
+  }  
+
+variable "access_token"  {
+  description = "Time unit in for the value in access_token_validity"
+  default = "minutes"
+  }  
+
+variable "id_token"  {
+  description = "Time unit in for the value in id_token_validity"
+  default = "minutes"
+  } 
+
+variable "refresh_token"  {
+  description = "Time unit in for the value in refresh_token_validity,"
+  default = "days"
+  } 
+
+variable "enable_cw_logs"  {
+  type        = bool
+  description = "Time unit in for the value in refresh_token_validity,"
+  default = false
+  } 
+
+  ##custom UI
+
+variable "custom_css" {
+  type        = string
+  description = "(Optional) The CSS values in the UI customization, provided as a String."
+  default     = null
+}
+variable "image_file" {
+  type        = string
+  description = "(Optional) The uploaded logo image for the UI customization, provided as a base64-encoded String. Drift detection is not possible for this argument."
+  default     = null
+}
+
+##Create user and groups in UserPool
+
+variable "user_name" {
+  type        = list
+  description = "(Required) The username for the user. Must be unique within the user pool. Must be a UTF-8 string between 1 and 128 characters. After the user is created, the username cannot be changed."
+  default     = []
+}
+
+variable "attributes_user" {
+  type        = map(string)
+  description = "The username for the user. Must be unique within the user pool. Must be a UTF-8 string between 1 and 128 characters. After the user is created, the username cannot be changed."
+  default     = {}
+}
+
+variable "desired_delivery_mediums" {
+  type        = list
+  description = "(Optional) A list of mediums to the welcome message will be sent through. Allowed values are EMAIL and SMS. If it's provided, make sure you have also specified email attribute for the EMAIL medium and phone_number for the SMS. More than one value can be specified. Amazon Cognito does not store the desired_delivery_mediums value"
+  default     = ["EMAIL"]
+}
+
+variable "message_action" {
+  type        = string
+  description = "(Optional) Set to RESEND to resend the invitation message to a user that already exists and reset the expiration limit on the user's account. Set to SUPPRESS to suppress sending the message. Only one value can be specified. Amazon Cognito does not store the message_action value."
+  default     = "SUPPRESS"
+}
+
+variable "password" {
+  type        = string
+  description = "(Required) The user's temporary password. Conflicts with password"
+  default     = null
+}
+
+variable "groups" {
+  type        = list
+  description = "List of the name of the user group."
+  default     = []
+}
+
+
+variable "precedence" {
+  type        = number
+  description = "(Optional) The precedence of the user group."
+  default     = null
+}
+
+variable "role_arn" {
+  type        = string
+  description = "(Optional) The ARN of the IAM role to be associated with the user group."
+  default     = null
+}

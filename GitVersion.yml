@@ -1,0 +1,17 @@
+mode: ContinuousDeployment
+continuous-delivery-fallback-tag: ''
+branches:
+  develop:
+    tag: useBranchName
+    increment: Patch
+  main:
+    tag: ''
+    increment: Patch
+    regex: "^main$"
+  pull-request:
+    tag: alpha-PR-
+    increment: Patch
+    regex: ^(pull|pull\-requests|pr)[/-]
+ignore:
+  sha: []
+merge-message-formats: {}

@@ -1,0 +1,86 @@
+
+pipeline {
+    agent {
+        kubernetes {
+          label 'terraform'
+        }
+    }
+    // parameters {
+    //     gitParameter name: 'TAG', 
+    //                  type: 'PT_TAG',
+    //                  defaultValue: 'master'
+    //     string(name: 'tag_version', defaultValue: ' ', description: 'Version del Tag v#.#.#')
+    //     string(name: 'tag_titulo', defaultValue: ' ', description: 'Descripcion de los cambios del Tag')             
+    // }	
+
+    environment {
+        TF_IN_AUTOMATION      = '1'
+        GIT_SSH_COMMAND = "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+        //GIT_REPO = 
+    }
+
+    stages {
+	     stage('checkout scm') {
+            steps {
+                echo 'Revisando repo'
+                git branch: env.GIT_BRANCH, credentialsId: 'ssh-github-user', url: 'git@github.com:bdb-dns/DAPGQ-DEVOPS-TF-ROLE.git'
+            }
+        }
+        stage('Init') {
+            steps {
+                script {
+                    currentBuild.displayName = params.version
+                }
+                sshagent (credentials: ['ssh-github-user']) {
+		            sh 'cd ejemplo; terraform init '	
+                }
+            }
+        }
+        stage('Plan&Apply') {
+            steps {
+                sh 'cd ejemplo; terraform plan -var-file=variables.tfvars -out=tf.plan'
+                sh 'cd ejemplo; terraform show -no-color tf.plan > tfplan.txt'
+                sh "cd ejemplo; terraform apply -input=false tf.plan"
+                }
+        }
+        stage('ApprovalDestroy') {
+            steps {
+		        sh "cd ejemplo; terraform show -no-color > lista.txt"    
+                script {
+	            def plan = readFile 'ejemplo/lista.txt'		
+                    input message: "Do you want to destroy?",
+                        parameters: [text(name: 'Destroy', description: 'Please review', defaultValue: plan)]
+                }
+            }
+        }
+        	    
+        stage('Destroy') {
+            steps {    
+                    sh "cd ejemplo;terraform destroy -auto-approve -var-file=variables.tfvars"
+           }
+        } 
+        stage('tag') {
+           steps { 
+            sshagent (credentials: ['ssh-github-user']) {    
+              script {
+                env.VERSION = sh(script: "cat tags | head -1 | awk -F'[|]' '{print \$1}'", returnStdout: true).trim()
+                env.TITULO = sh(script: "cat tags | head -1 | awk -F'[|]' '{print \$2}'", returnStdout: true).trim()   
+                if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'main') {
+		           sh("git config user.email modulos@jenkins.net")
+                   sh("git config user.name modulos")
+                   // tags current changeset
+		           sh ("git tag -a ${VERSION} -m \"Version: ${TITULO}\"")
+                   sh ("git push origin ${VERSION}")
+                }
+              }
+           }
+         }   
+      }
+}
+    post {
+        always {
+            sh "cd ejemplo;terraform destroy -auto-approve -var-file=variables.tfvars"
+            archiveArtifacts artifacts: 'ejemplo/tfplan.txt'
+        }
+    }
+}

@@ -1,0 +1,3 @@
+v1.1.2 | Crear un role con varias politicas que se puedan atachar se envia aws_iam_policy_document la lista de las politicas 
+v1.1.1 | Atachar politicas a roles existentes
+v1.1.0 | Ajustar Pipeline Jenkins Jenkisfile
